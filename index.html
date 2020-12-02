@@ -54,6 +54,37 @@
           });
         },
       });
+
+      AFRAME.registerComponent('mosaic-grid', {
+        init: function() {
+          var rows = 10;
+          var cols = 10;
+          var height = 0.2;
+          var width = 0.2;
+          for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+              var mosaicTile = document.createElement('a-plane');
+              mosaicTile.setAttribute('width', width);
+              mosaicTile.setAttribute('height', height);
+              var worldLocations = this.coordinateToWorldLocation(i, j, rows, cols, height, width);
+              mosaicTile.setAttribute('position', worldLocations + " -4");
+              var randomColor = Math.floor(Math.random()*16777215).toString(16);
+              mosaicTile.setAttribute('color', '#' + randomColor);
+              mosaicTile.setAttribute('colorable', '');
+              this.el.appendChild(mosaicTile);
+            }
+          }
+        },
+
+        coordinateToWorldLocation: function(row, col, rows, cols, height, width) {
+          // assumes centered at 0, 0. Returns {x, y for center of square}
+          var leftmostWorldX = -1 * cols / 2 * width;
+          var topmostWorldY = rows / 2 * height;
+          var x = leftmostWorldX + width * col + width / 2;
+          var y = topmostWorldY - height * row - height / 2;
+          return x + " " + y;
+        }
+      });
     </script>
 </head>
 <body>
@@ -76,7 +107,7 @@
       <a-circle color="green" position="0 0 0" radius="0.4" color-select side="double"></a-circle>
       <a-circle color="blue" position="1 0 0" radius="0.4" color-select side="double"></a-circle>
     </a-entity>
-    <a-box position="0 1 -3" colorable></a-box>
+    <a-entity mosaic-grid></a-entity>
   </a-scene>
 </body>
 </html>
