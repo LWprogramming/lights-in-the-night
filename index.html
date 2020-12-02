@@ -45,6 +45,15 @@
         }
       });
 
+      AFRAME.registerComponent('colorable', {
+        init: function() {
+          var el = this.el;
+          el.addEventListener('click', function(event) {
+            var currentColor = document.querySelector('a-scene').systems['color-select'].currentColor;
+            el.setAttribute("color", currentColor);
+          });
+        },
+      });
     </script>
 </head>
 <body>
@@ -67,6 +76,7 @@
       <a-circle color="green" position="0 0 0" radius="0.4" color-select side="double"></a-circle>
       <a-circle color="blue" position="1 0 0" radius="0.4" color-select side="double"></a-circle>
     </a-entity>
+    <a-box position="0 1 -3" colorable></a-box>
   </a-scene>
 </body>
 </html>
