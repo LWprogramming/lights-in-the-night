@@ -8,19 +8,39 @@
     <script src="https://unpkg.com/aframe-text-geometry-component/dist/aframe-text-geometry-component.min.js"></script>
     <script type="text/javascript">
       /* jshint esversion: 6 */
-      AFRAME.registerComponent('current-color', {
-        schema: {
-          color: {type: 'string', default: 'white'} // TODO: not great error checking lol, could also accept "#ff0000" for example
+      AFRAME.registerComponent('current-color-display', {
+        init: function() {
+          var system = document.querySelector('a-scene').systems['color-select'];
+          system.registerCurrentColorDisplay(this.el);
         }
       });
 
-      AFRAME.registerComponent('selectable-color', {
+      AFRAME.registerSystem('color-select', {
         init: function() {
-          var currentColorCircle = document.getElementById("current-color-circle");
+          this.currentColor = 'white'; // TODO: not great sanitizing haha, could also accept "#ff0000" for example
+          this.currentColorDisplay = null;
+        },
+
+        // Current color display shows the current paintbrush color
+        registerCurrentColorDisplay(currentColorDisplay) {
+          this.currentColorDisplay = currentColorDisplay;
+        },
+
+        // Set the current paintbrush color
+        setCurrentColor(color) {
+          // TODO: need to ensure that this.currentColorDisplay is initialized
+          this.currentColor = color;
+          this.currentColorDisplay.setAttribute("color", color);
+        },
+      });
+
+      AFRAME.registerComponent('color-select', {
+        init: function() {
           var el = this.el;
+          var system = this.system;
           el.addEventListener('click', function (event) {
             console.log('I was clicked at: ', event.detail.intersection.point);
-            currentColorCircle.setAttribute("color", el.getAttribute("color"));
+            system.setCurrentColor(el.getAttribute("color"));
           });
         }
       });
@@ -32,10 +52,10 @@
     <a-entity>
       <a-camera look-controls position="0 0 0" wasd-controls="fly:true">
         <a-cursor></a-cursor>
-        <a-entity id="current-color" position="0.5 0.5 -1" current-color>
+        <a-entity position="0.5 0.5 -1">
           <a-entity position="0.374 0.105 0" text="value: Current color; color: black"></a-entity> <!-- no clue why this positioning puts it above the color circle but it does -->
           <a-entity>
-            <a-circle id="current-color-circle" radius="0.05"></a-circle>
+            <a-circle id="current-color-circle" radius="0.05" current-color-display></a-circle>
             <a-ring id="current-color-ring" radius-inner="0.05" radius-outer="0.055" color="black"></a-ring>
           </a-entity>
         </a-entity>
@@ -43,9 +63,9 @@
     </a-entity>
     <a-sphere color="yellow" position="0 0 0" radius="10" material="side: double"></a-sphere>
     <a-entity id="palette" position="0 0 -3">
-      <a-circle color="red" position="-1 0 0" radius="0.4" selectable-color side="double"></a-circle>
-      <a-circle color="green" position="0 0 0" radius="0.4" selectable-color side="double"></a-circle>
-      <a-circle color="blue" position="1 0 0" radius="0.4" selectable-color side="double"></a-circle>
+      <a-circle color="red" position="-1 0 0" radius="0.4" color-select side="double"></a-circle>
+      <a-circle color="green" position="0 0 0" radius="0.4" color-select side="double"></a-circle>
+      <a-circle color="blue" position="1 0 0" radius="0.4" color-select side="double"></a-circle>
     </a-entity>
   </a-scene>
 </body>
