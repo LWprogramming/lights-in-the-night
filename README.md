@@ -6,3 +6,7 @@ from https://aframe.io/docs/0.5.0/components/camera.html#fixing-entities-to-the-
 # Run command:
 
 `python3 -m http.server`
+
+# Acknowledgements
+
+https://github.com/etiennepinchon/aframe-glow for the glow.js code
