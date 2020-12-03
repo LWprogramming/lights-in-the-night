@@ -86,6 +86,16 @@
           return x + " " + y + " -" + depth;
         }
       });
+
+      AFRAME.registerComponent('palette', {
+        // makes the palette face the origin so that the plane of the color circles is perfectly lined up when the player looks at it. This requires a rotation about the x-axis.
+        init: function() {
+          var yPos = this.el.getAttribute('position').y;
+          var zPos = this.el.getAttribute('position').z;
+          var xRotation = -Math.atan(yPos / zPos) * 180 / Math.PI; // Aframe uses degrees
+          this.el.setAttribute('rotation', xRotation + " 0 0");
+        }
+      });
     </script>
 </head>
 <body>
@@ -103,7 +113,7 @@
       </a-camera>
     </a-entity>
     <a-sphere color="yellow" position="0 0 0" radius="10" material="side: double"></a-sphere>
-    <a-entity id="palette" position="0 0 -3">
+    <a-entity position="0 -2 -4" palette>
       <a-circle color="red" position="-1 0 0" radius="0.4" color-select side="double"></a-circle>
       <a-circle color="green" position="0 0 0" radius="0.4" color-select side="double"></a-circle>
       <a-circle color="blue" position="1 0 0" radius="0.4" color-select side="double"></a-circle>
