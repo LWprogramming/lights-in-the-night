@@ -97,6 +97,30 @@
           this.el.setAttribute('rotation', xRotation + " 0 0");
         }
       });
+
+      AFRAME.registerComponent('pulsing-glow', {
+        init: function() {
+          this.el.setAttribute('expanding', false);
+        },
+
+        tick: function() {
+          var r = Number(this.el.getAttribute('glow').scale);
+          if (r <= 1.01) {
+            this.el.setAttribute('expanding', true);
+          }
+          else if (r >= 2) {
+            this.el.setAttribute('expanding', false);
+          }
+          // Ah, Javascript, you and your types >:)
+          if (this.el.getAttribute('expanding') == 'true') {
+            r += 0.05;
+          }
+          else {
+            r -= 0.01;
+          }
+          this.el.setAttribute('glow', 'scale:' + r);
+        }
+      });
     </script>
 </head>
 <body>
@@ -123,7 +147,7 @@
     <a-sphere glow="enabled:true; c:0.2; p:1.4" position="1 0.5 -2" rotation="0 45 0" radius="0.1"></a-sphere>
     <a-sphere glow="enabled:true; c:0.2; p:1.4" position="-1 0.5 -2" rotation="0 45 0" radius="0.1"></a-sphere>
     <a-sphere glow="enabled:true; c:0.2; p:1.4" position="1 -0.5 -2" rotation="0 45 0" radius="0.1"></a-sphere>
-    <a-sphere glow="enabled:true; c:0.2; p:1.4" position="-1 -0.5 -2" rotation="0 45 0" radius="0.1"></a-sphere>
+    <a-sphere glow="enabled:true; c:0; p:0" position="-1 -0.5 -2" rotation="0 45 0" radius="0.1" pulsing-glow></a-sphere>
     <a-entity mosaic-grid></a-entity>
   </a-scene>
 </body>
