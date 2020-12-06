@@ -99,24 +99,34 @@
       });
 
       AFRAME.registerComponent('pulsing-glow', {
+        schema: {
+          expandingTime: {type: 'number', default: 1},
+          shrinkingTime: {type: 'number', default: 3},
+          minScale: {type: 'number', default: 2}
+        },
+
         init: function() {
-          this.el.setAttribute('expanding', false);
+          this.expanding = false;
+          this.originalScale = Number(this.el.getAttribute('glow').scale); // must be at least 1
+          this.assumedTicksPerSecond = 40;
+          this.expandingDelta = (this.originalScale - 1) / this.assumedTicksPerSecond / this.data.expandingTime;
+          this.shrinkingDelta = (this.originalScale - 1) / this.assumedTicksPerSecond / this.data.shrinkingTime;
         },
 
         tick: function() {
           var r = Number(this.el.getAttribute('glow').scale);
-          if (r <= 1.01) {
+          if (r <= this.data.minScale) {
             this.el.setAttribute('expanding', true);
           }
-          else if (r >= 2) {
+          else if (r >= this.originalScale) {
             this.el.setAttribute('expanding', false);
           }
-          // Ah, Javascript, you and your types >:)
+          // Ah, Javascript, you and your types >:) must check for the string 'true'
           if (this.el.getAttribute('expanding') == 'true') {
-            r += 0.05;
+            r += this.expandingDelta;
           }
           else {
-            r -= 0.01;
+            r -= this.shrinkingDelta;
           }
           this.el.setAttribute('glow', 'scale:' + r);
         }
@@ -146,6 +156,11 @@
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 -3" radius="0.05"></a-sphere>
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 -0.5 -3" radius="0.05"></a-sphere>
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 -3" radius="0.05" pulsing-glow></a-sphere>
+
+    <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 3" radius="0.05"></a-sphere>
+    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 3" radius="0.05"></a-sphere>
+    <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 -0.5 3" radius="0.05"></a-sphere>
+    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 3" radius="0.05" pulsing-glow></a-sphere>
     <a-entity mosaic-grid></a-entity>
   </a-scene>
 </body>
