@@ -27,7 +27,7 @@ AFRAME.registerComponent('glow', {
                 "c":   { type: "f", value: that.data.c },
                 "p":   { type: "f", value: that.data.p },
                 glowColor: { type: "c", value: new THREE.Color(that.data.color) },
-                viewVector: { type: "v3", value: new THREE.Vector3().subVectors(camera.position, that.el.getAttribute('position')).projectOnVector( camera.getWorldDirection() ) }
+                viewVector: { type: "v3", value: new THREE.Vector3().subVectors(camera.position, that.el.getAttribute('position')) }
             },
             vertexShader:   THREE.__GlowShader.vertexShader,
             fragmentShader: THREE.__GlowShader.fragmentShader,
@@ -89,8 +89,10 @@ AFRAME.registerComponent('glow', {
       this.glowMesh.rotation.set(this.el.object3D.rotation.x, this.el.object3D.rotation.y, this.el.object3D.rotation.z);
       this.glowMesh.scale.set(this.el.object3D.scale.x*this.data.scale, this.el.object3D.scale.y*this.data.scale, this.el.object3D.scale.z*this.data.scale);
       if (!this.camera) { return; }
+      var glowMeshWorldPosition = new THREE.Vector3();
+      this.glowMesh.getWorldPosition(glowMeshWorldPosition);
       this.glowMesh.material.uniforms.viewVector.value =
-            new THREE.Vector3().subVectors( this.camera.position, this.glowMesh.position ).projectOnVector( this.camera.getWorldDirection() );
+            new THREE.Vector3().subVectors( this.camera.position, glowMeshWorldPosition );
     }
   },
   remove: function () {
