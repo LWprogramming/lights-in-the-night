@@ -18,7 +18,7 @@
 
       AFRAME.registerSystem('color-select', {
         init: function() {
-          this.currentColor = 'white'; // TODO: not great sanitizing haha, could also accept "#ff0000" for example
+          this.currentColor = new THREE.Color('white'); // Must always be a THREE.Color
           this.currentColorDisplay = null;
         },
 
@@ -30,7 +30,7 @@
         // Set the current paintbrush color
         setCurrentColor(color) {
           // TODO: need to ensure that this.currentColorDisplay is initialized
-          this.currentColor = color;
+          this.currentColor = new THREE.Color(color);
           this.currentColorDisplay.setAttribute("color", color);
         },
       });
@@ -50,8 +50,8 @@
         init: function() {
           var el = this.el;
           el.addEventListener('click', function(event) {
-            var currentColor = document.querySelector('a-scene').systems['color-select'].currentColor;
-            el.setAttribute("color", currentColor);
+            var currentColor = document.querySelector('a-scene').systems['color-select'].currentColor.getHexString();
+            el.setAttribute("color", '#' + currentColor);
           });
         },
       });
