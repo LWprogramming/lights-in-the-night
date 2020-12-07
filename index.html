@@ -107,7 +107,7 @@
           var z = -a * t / denominator;
           var axis = new THREE.Vector3( 0, 1, 0 ); // rotate around y-axis which in A-frame points straight up and down
           var position = new THREE.Vector3(x, z, -y).multiplyScalar(this.data.sphereRadius);
-          return position.applyAxisAngle(axis, this.data.rotation); // this is not a typo-- the Wolfram formula has z-axis pointing up, but in Aframe that's the y-axis.
+          return position.applyAxisAngle(axis, this.data.rotation * Math.PI / 180); // this is not a typo-- the Wolfram formula has z-axis pointing up, but in Aframe that's the y-axis.
         },
 
         // returns an a-sphere given a t
@@ -211,8 +211,9 @@
     <a-entity spiral-lights="colorHexString:#00ff00; rotation:90"></a-entity> <!-- green -->
     <a-entity spiral-lights="colorHexString:#ffff00; rotation:135"></a-entity> <!-- yellow -->
     <a-entity spiral-lights="colorHexString:#ff00ff; rotation:180"></a-entity> <!--  -->
-    <a-entity spiral-lights="colorHexString:#00ffff; rotation:215"></a-entity> <!--  -->
-
+    <a-entity spiral-lights="colorHexString:#00ffff; rotation:225"></a-entity> <!--  -->
+    <a-entity spiral-lights="colorHexString:#87ceeb; rotation:270"></a-entity> <!-- sky blue -->
+    <a-entity spiral-lights="colorHexString:#FFA500; rotation:315"></a-entity> <!-- orange -->
 
     <!-- <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 -3" radius="0.05" pulsing-glow></a-sphere> -->
 <!--     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 -3" radius="0.05" pulsing-glow></a-sphere>
