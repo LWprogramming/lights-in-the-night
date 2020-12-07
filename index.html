@@ -87,6 +87,54 @@
           return x + " " + y + " -" + depth;
         }
       });
+      AFRAME.registerComponent('spiral-lights', {
+        // represents a spiral of glowing, pulsing spheres on a sphere with the player at the center of the sphere. Formulas from here: https://mathworld.wolfram.com/SphericalSpiral.html
+        schema: {
+          sphereRadius: {type: 'number', default: 5}, // radius of the large sphere on which we put the spiral
+          a: {type: 'number', default: 1}, // arbitrary constant from the Wolfram link
+          samplingFrequency: {type: 'number', default: 5}, // number of samples to take per time t.
+          glowingSphereRadius: {type: 'number', default: 0.05},
+          colorHexString: {type: 'color', default: '#ffffff'}, // must include # symbol for now because it glitches out otherwise
+          rotation: {type: 'number', default: 0}, // rotation in degrees about the y-axis for the spiral. Unfortunately, we can't add this directly in the rotation attribute of the entity itself because the glow mesh assumes the entity's rotation is 0 0 0, or else the glow mesh will be incorrectly oriented and will appear as a glowing object from some angles and as a semi-transparent bubble from others.
+        },
+
+        // given a time t, calculate the coordinates of the center of a sphere and return a THREE.Vector3
+        getCoordinates: function(t) {
+          var a = this.data.a;
+          var denominator = Math.sqrt(1 + a * a + t * t);
+          var x = Math.cos(t) / denominator;
+          var y = Math.sin(t) / denominator;
+          var z = -a * t / denominator;
+          var axis = new THREE.Vector3( 0, 1, 0 ); // rotate around y-axis which in A-frame points straight up and down
+          var position = new THREE.Vector3(x, z, -y).multiplyScalar(this.data.sphereRadius);
+          return position.applyAxisAngle(axis, this.data.rotation); // this is not a typo-- the Wolfram formula has z-axis pointing up, but in Aframe that's the y-axis.
+        },
+
+        // returns an a-sphere given a t
+        createGlowingSphere: function(t) {
+            var sphere = document.createElement('a-sphere');
+            sphere.setAttribute('radius', this.data.glowingSphereRadius);
+            sphere.setAttribute('glow', 'c:0.2; p:1.4; scale:3; color: ' + this.data.colorHexString);
+            var coordinates = this.getCoordinates(t);
+            sphere.setAttribute('position', coordinates.x + ' ' + coordinates.y + ' ' + coordinates.z);
+            sphere.setAttribute('pulsing-glow', '');
+            return sphere;
+        },
+
+        init: function() {
+          // initialize the middle one, at t = 0, and then move upwards and downwards until the sphere's center passes a certain threshold.
+          // TODO: see if you can find a better upper bound than this magic number... this is hardcoded assuming default parameters
+          var documentFragment = document.createDocumentFragment();
+          for (let t = 0; t < 2; t += 1 / this.data.samplingFrequency) {
+            if (t == 0) {
+              continue; // prevent weird overlapping spheres near t = 0.
+            }
+            documentFragment.appendChild(this.createGlowingSphere(t * t)); // using squre of t doesn't change the shape, but changes which points get sampled. The Wolfram formula spreads out points near t = 0 and compresses them near t = +/- infinity, so this adjusts for that
+            documentFragment.appendChild(this.createGlowingSphere(-t * t));
+          }
+          this.el.appendChild(documentFragment);
+        },
+      });
 
       AFRAME.registerComponent('palette', {
         // makes the palette face the origin so that the plane of the color circles is perfectly lined up when the player looks at it. This requires a rotation about the x-axis.
@@ -158,16 +206,24 @@
       <a-circle color="green" position="0 0 0" radius="0.4" color-select side="double"></a-circle>
       <a-circle color="blue" position="1 0 0" radius="0.4" color-select side="double"></a-circle>
     </a-entity>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 -3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 -3" radius="0.05" pulsing-glow></a-sphere>
+    <a-entity spiral-lights="colorHexString:#ff0000"></a-entity> <!-- red -->
+    <a-entity spiral-lights="colorHexString:#0000ff; rotation:45"></a-entity> <!-- blue -->
+    <a-entity spiral-lights="colorHexString:#00ff00; rotation:90"></a-entity> <!-- green -->
+    <a-entity spiral-lights="colorHexString:#ffff00; rotation:135"></a-entity> <!-- yellow -->
+    <a-entity spiral-lights="colorHexString:#ff00ff; rotation:180"></a-entity> <!--  -->
+    <a-entity spiral-lights="colorHexString:#00ffff; rotation:215"></a-entity> <!--  -->
+
+
+    <!-- <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 -3" radius="0.05" pulsing-glow></a-sphere> -->
+<!--     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 -3" radius="0.05" pulsing-glow></a-sphere>
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 -0.5 -3" radius="0.05" pulsing-glow></a-sphere>
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 -3" radius="0.05" pulsing-glow></a-sphere>
-
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 3" radius="0.05" pulsing-glow></a-sphere>
+ -->
+<!--     <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 3" radius="0.05" pulsing-glow></a-sphere>
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 3" radius="0.05" pulsing-glow></a-sphere>
     <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 -0.5 3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 3" radius="0.05" pulsing-glow></a-sphere>
-    <a-entity mosaic-grid></a-entity>
+    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 3" radius="0.05" pulsing-glow></a-sphere> -->
+    <!-- <a-entity mosaic-grid></a-entity> -->
   </a-scene>
 </body>
 </html>
