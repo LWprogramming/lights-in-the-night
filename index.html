@@ -55,7 +55,7 @@
               sphere.setAttribute('position', coordinates.x + ' ' + coordinates.y + ' ' + coordinates.z);
               sphere.setAttribute('pulsing-glow', '');
               sphere.setAttribute('visible', true); // reveal!
-            }, Math.random() * 30000);
+            }, Math.random() * 10000);
         },
 
         init: function() {
@@ -126,10 +126,10 @@
           //   spiral.setAttribute('spiral-lights', 'colorHexString:' + colorHexString + '; rotation:' + rotationDegrees);
           //   setTimeout(function() {document.getElementById('lights-container').appendChild(spiral);}, Math.random() * 3000); // TODO don't get by id
           // }
-          this.clicked = false;
           var that = this;
+          this.clicked = false;
           this.el.addEventListener('click', function (event) {
-            if (this.clicked) {
+            if (that.clicked) {
               return;
             }
             console.log('I was clicked at: ', event.detail.intersection.point);
@@ -138,14 +138,14 @@
             for (let i = 0; i < spiralList.length; i++) {
               spiralList[i].el.setAttribute('spiral-lights', 'spiralVisible:true');
             }
-            this.clicked = true;
+            that.clicked = true;
           });
         }
       });
 
       AFRAME.registerComponent('glow-on-click', {
         schema: {
-          clickedGlowScale: {type: 'number', default: 8} // hardcoding strikes again! TODO this depends on the glowRadius we currently have, but I like 4 for now
+          clickedGlowScale: {type: 'number', default: 6} // hardcoding strikes again! TODO this depends on the glowRadius we currently have, but I like 4 for now
         },
 
         init: function() {
