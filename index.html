@@ -24,10 +24,11 @@
         schema: {
           sphereRadius: {type: 'number', default: 5}, // radius of the large sphere on which we put the spiral
           a: {type: 'number', default: 1}, // arbitrary constant from the Wolfram link
-          samplingFrequency: {type: 'number', default: 5}, // number of samples to take per time t.
+          samplingFrequency: {type: 'number', default: 3}, // number of samples to take per time t.
           glowingSphereRadius: {type: 'number', default: 0.05},
           colorHexString: {type: 'color', default: '#ffffff'}, // must include # symbol for now because it glitches out otherwise
           rotation: {type: 'number', default: 0}, // rotation in degrees about the y-axis for the spiral. Unfortunately, we can't add this directly in the rotation attribute of the entity itself because the glow mesh assumes the entity's rotation is 0 0 0, or else the glow mesh will be incorrectly oriented and will appear as a glowing object from some angles and as a semi-transparent bubble from others.
+          spiralVisible: {type: 'boolean', default: false} // all spirals start invisible and only appear after the button gets pressed.
         },
 
         // given a time t, calculate the coordinates of the center of a sphere and return a THREE.Vector3
@@ -42,30 +43,48 @@
           return position.applyAxisAngle(axis, this.data.rotation * Math.PI / 180); // this is not a typo-- the Wolfram formula has z-axis pointing up, but in Aframe that's the y-axis.
         },
 
-        // returns an a-sphere given a t
-        createGlowingSphere: function(t) {
-            var sphere = document.createElement('a-sphere');
-            sphere.setAttribute('radius', this.data.glowingSphereRadius);
-            sphere.setAttribute('glow', 'c:0.2; p:1.4; scale:3; color: ' + this.data.colorHexString);
-            var coordinates = this.getCoordinates(t);
-            sphere.setAttribute('position', coordinates.x + ' ' + coordinates.y + ' ' + coordinates.z);
-            sphere.setAttribute('pulsing-glow', '');
-            return sphere;
+        // sets attributes for a glowing sphere and reveals it based on the index i in the array where it is.
+        revealGlowingSphere: function(i) {
+            var t; // time variable of our spiral-on-a-sphere parametric equation.
+            if (i >= 5) {
+              // remember, 10 children! again, hardcoded
+              t = i / 3 - 4 / 3;
+              t = t * t;
+            }
+            else {
+              t = i / 3 - 5 / 3;
+              t = -t * t;
+            }
+            var that = this;
+            setTimeout(function() {
+              var sphere = that.el.children[i];
+              sphere.setAttribute('radius', that.data.glowingSphereRadius);
+              // TODO: note that the glow doesn't take into account things like the sphere's current radius until after this function executes!! so the new radius won't be taken into account. luckily for now, we can just hardcode
+              sphere.setAttribute('glow', 'enabled:true; c:0.2; p:1.4; scale:3; color: ' + that.data.colorHexString);
+              var coordinates = that.getCoordinates(t);
+              sphere.setAttribute('position', coordinates.x + ' ' + coordinates.y + ' ' + coordinates.z);
+              sphere.setAttribute('pulsing-glow', '');
+              sphere.setAttribute('visible', true); // reveal!
+            }, Math.random() * 30000);
         },
 
         init: function() {
-          // initialize the middle one, at t = 0, and then move upwards and downwards until the sphere's center passes a certain threshold.
-          // TODO: see if you can find a better upper bound than this magic number... this is hardcoded assuming default parameters
-          var documentFragment = document.createDocumentFragment();
-          for (let t = 0; t < 2; t += 1 / this.data.samplingFrequency) {
-            if (t == 0) {
-              continue; // prevent weird overlapping spheres near t = 0.
-            }
-            documentFragment.appendChild(this.createGlowingSphere(t * t)); // using squre of t doesn't change the shape, but changes which points get sampled. The Wolfram formula spreads out points near t = 0 and compresses them near t = +/- infinity, so this adjusts for that
-            documentFragment.appendChild(this.createGlowingSphere(-t * t));
-          }
-          this.el.appendChild(documentFragment);
+          this.data.spiralVisible = false;
         },
+
+        update: function(oldData) {
+          if (this.data.spiralVisible != true) {
+            return;
+          }
+          console.log(this.el);
+          // otherwise it's visible, so we turn the lights on.
+            console.log('children length should be 10. actual: ' + this.el.children.length);
+          for (let i = 0; i < this.el.children.length; i++) {
+            // we'll have t go from (-2, 2), not including 0, with samplingFrequency 3 (this is all hardcoded TODO make it less hardcoded haha)
+            // so the relevant points are 1/3, 2/3, 3/3, 4/3, 5/3 and the corresponding negative numbers for a total of 10 points.
+            this.revealGlowingSphere(i);
+          }
+        }
       });
 
       AFRAME.registerComponent('pulsing-glow', {
@@ -119,13 +138,16 @@
             setTimeout(function() {document.getElementById('lights-container').appendChild(spiral);}, Math.random() * 3000); // TODO don't get by id
           }
           this.clicked = false;
+          var that = this;
           this.el.addEventListener('click', function (event) {
             if (this.clicked) {
               return;
             }
             console.log('I was clicked at: ', event.detail.intersection.point);
-            for (let i = 0; i < 8; i++) {
-              createSpiral(i);
+            var lightsContainer = document.getElementById('lights-container');
+            var spiralList = lightsContainer.object3D.children;
+            for (let i = 0; i < spiralList.length; i++) {
+              spiralList[i].el.setAttribute('spiral-lights', 'spiralVisible:true');
             }
             this.clicked = true;
           });
@@ -145,7 +167,24 @@
         <a-entity position="0.417 0 0.01" text="value: Click me; color: white"></a-entity>
       </a-circle>
     </a-entity>
-    <a-entity id="lights-container"></a-entity>
+    <a-entity id="lights-container">
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:90">
+      <!-- unfortunately, hardcoding radius seems necessary as far as i can tell- see above about glow not taking radius into account etc.-->
+      <!-- in addition, i list all of these out explicitly instead of attempting to append to DOM because I suspect, but haven't gotten the chance to profile, the DOM manipulation we used to have that'd programamtically add these in. -->
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+        <a-sphere radius="0.05"></a-sphere>
+      </a-entity>
+      <!-- <a-entity spiral-lights="color:blue;rotation:0"></a-entity> -->
+
+    </a-entity>
   </a-scene>
 </body>
 </html>
