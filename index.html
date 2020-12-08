@@ -139,6 +139,7 @@
               spiralList[i].el.setAttribute('spiral-lights', 'spiralVisible:true');
             }
             that.clicked = true;
+            that.el.parentNode.removeChild(that.el);
           });
         }
       });
