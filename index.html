@@ -2,23 +2,13 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>paint??</title>
+    <title>lights</title>
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <script src="https://unpkg.com/aframe-text-geometry-component/dist/aframe-text-geometry-component.min.js"></script>
     <script src="src/glow.js"></script>
     <script type="text/javascript">
       /* jshint esversion: 6 */
-      AFRAME.registerComponent('colorable', {
-        init: function() {
-          var el = this.el;
-          el.addEventListener('click', function(event) {
-            var currentColor = document.querySelector('a-scene').systems['color-select'].currentColor.getHexString();
-            el.setAttribute("color", '#' + currentColor);
-          });
-        },
-      });
-
       AFRAME.registerComponent('spiral-lights', {
         // represents a spiral of glowing, pulsing spheres on a sphere with the player at the center of the sphere. Formulas from here: https://mathworld.wolfram.com/SphericalSpiral.html
         schema: {
