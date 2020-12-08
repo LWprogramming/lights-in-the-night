@@ -25,7 +25,7 @@
           sphereRadius: {type: 'number', default: 5}, // radius of the large sphere on which we put the spiral
           a: {type: 'number', default: 1}, // arbitrary constant from the Wolfram link
           samplingFrequency: {type: 'number', default: 3}, // number of samples to take per time t.
-          glowingSphereRadius: {type: 'number', default: 0.05},
+          glowingSphereRadius: {type: 'number', default: 0.1},
           colorHexString: {type: 'color', default: '#ffffff'}, // must include # symbol for now because it glitches out otherwise
           rotation: {type: 'number', default: 0}, // rotation in degrees about the y-axis for the spiral. Unfortunately, we can't add this directly in the rotation attribute of the entity itself because the glow mesh assumes the entity's rotation is 0 0 0, or else the glow mesh will be incorrectly oriented and will appear as a glowing object from some angles and as a semi-transparent bubble from others.
           spiralVisible: {type: 'boolean', default: false} // all spirals start invisible and only appear after the button gets pressed.
@@ -60,7 +60,7 @@
               var sphere = that.el.children[i];
               sphere.setAttribute('radius', that.data.glowingSphereRadius);
               // TODO: note that the glow doesn't take into account things like the sphere's current radius until after this function executes!! so the new radius won't be taken into account. luckily for now, we can just hardcode
-              sphere.setAttribute('glow', 'enabled:true; c:0.2; p:1.4; scale:3; color: ' + that.data.colorHexString);
+              sphere.setAttribute('glow', 'enabled:true');
               var coordinates = that.getCoordinates(t);
               sphere.setAttribute('position', coordinates.x + ' ' + coordinates.y + ' ' + coordinates.z);
               sphere.setAttribute('pulsing-glow', '');
@@ -157,7 +157,7 @@
 </head>
 <body>
   <a-scene id="scene">
-    <a-sky color="black"></a-sky>
+    <a-sky color="navy"></a-sky>
     <a-camera look-controls position="0 0 0" wasd-controls="fly:true">
       <a-cursor></a-cursor>
     </a-camera>
@@ -168,22 +168,111 @@
       </a-circle>
     </a-entity>
     <a-entity id="lights-container">
-      <a-entity spiral-lights="colorHexString:#ff0000;rotation:90">
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:0">
       <!-- unfortunately, hardcoding radius seems necessary as far as i can tell- see above about glow not taking radius into account etc.-->
-      <!-- in addition, i list all of these out explicitly instead of attempting to append to DOM because I suspect, but haven't gotten the chance to profile, the DOM manipulation we used to have that'd programamtically add these in. -->
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
-        <a-sphere radius="0.05"></a-sphere>
+      <!-- in addition, i list all of these out explicitly instead of attempting to append to DOM because I suspect, but haven't gotten the chance to profile, the DOM manipulation we used to have that'd programamtically add these in. UPDATE: upon further experimentation it might just be setting the values for "glow" that's causing trouble, because those are THREE.js operations. Unfortunately this means colorHexString is completely ignored at the moment -->
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff0000" radius="0.1" visible="false"></a-sphere>
       </a-entity>
-      <!-- <a-entity spiral-lights="color:blue;rotation:0"></a-entity> -->
 
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:45">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ff00" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
+
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:90">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #add8e6" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
+
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:135">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffff00" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
+
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:180">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ff00ff" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
+
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:225">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #00ffff" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
+
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:270">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #ffc0cb" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
+
+      <a-entity spiral-lights="colorHexString:#ff0000;rotation:315">
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+        <a-sphere glow="enabled:false; c:0.2; p:1.4; scale:3; color: #800080" radius="0.1" visible="false"></a-sphere>
+      </a-entity>
     </a-entity>
   </a-scene>
 </body>
