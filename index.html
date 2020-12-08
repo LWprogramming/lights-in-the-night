@@ -76,9 +76,8 @@
           if (this.data.spiralVisible != true) {
             return;
           }
-          console.log(this.el);
           // otherwise it's visible, so we turn the lights on.
-            console.log('children length should be 10. actual: ' + this.el.children.length);
+            // console.log('children length should be 10. actual: ' + this.el.children.length);
           for (let i = 0; i < this.el.children.length; i++) {
             // we'll have t go from (-2, 2), not including 0, with samplingFrequency 3 (this is all hardcoded TODO make it less hardcoded haha)
             // so the relevant points are 1/3, 2/3, 3/3, 4/3, 5/3 and the corresponding negative numbers for a total of 10 points.
@@ -129,14 +128,14 @@
 
       AFRAME.registerComponent('light-switch', {
         init: function() {
-          var colors = ['red', 'green', 'blue', 'yellow', 'aquamarine', 'purple', 'firebrick', 'white']; // hardcoding yay! TODO
-          function createSpiral(i) {
-            var rotationDegrees = 45 * i;
-            var colorHexString = '#' + new THREE.Color(colors[i]).getHexString();
-            var spiral = document.createElement('a-entity');
-            spiral.setAttribute('spiral-lights', 'colorHexString:' + colorHexString + '; rotation:' + rotationDegrees);
-            setTimeout(function() {document.getElementById('lights-container').appendChild(spiral);}, Math.random() * 3000); // TODO don't get by id
-          }
+          // var colors = ['red', 'green', 'blue', 'yellow', 'aquamarine', 'purple', 'firebrick', 'white']; // hardcoding yay! TODO
+          // function createSpiral(i) {
+          //   var rotationDegrees = 45 * i;
+          //   var colorHexString = '#' + new THREE.Color(colors[i]).getHexString();
+          //   var spiral = document.createElement('a-entity');
+          //   spiral.setAttribute('spiral-lights', 'colorHexString:' + colorHexString + '; rotation:' + rotationDegrees);
+          //   setTimeout(function() {document.getElementById('lights-container').appendChild(spiral);}, Math.random() * 3000); // TODO don't get by id
+          // }
           this.clicked = false;
           var that = this;
           this.el.addEventListener('click', function (event) {
