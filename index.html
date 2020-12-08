@@ -171,7 +171,8 @@
   <a-scene id="scene">
     <a-sky color="black"></a-sky>
     <a-camera look-controls position="0 0 0" wasd-controls="fly:true">
-      <a-cursor></a-cursor>
+      <!-- Important because fuse is true on mobile by default but false on desktop. This change allows the viewer to tap any of the glowing spheres instead of having to stare at them for fuseTime. -->
+      <a-cursor fuse="false"></a-cursor>
     </a-camera>
     <a-entity position="0 0 -1">
       <a-circle color="blue" radius="0.4" side="double" light-switch>
