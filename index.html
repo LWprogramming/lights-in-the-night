@@ -51,6 +51,14 @@
               sphere.setAttribute('radius', that.data.glowingSphereRadius);
               // TODO: note that the glow doesn't take into account things like the sphere's current radius until after this function executes!! so the new radius won't be taken into account. luckily for now, we can just hardcode
               sphere.setAttribute('glow', 'enabled:true');
+              if (AFRAME.utils.device.isMobile ()) {
+                sphere.setAttribute('glow', 'side:back');
+                // TODO: this is a hack to deal with a mysterious shader issue that crops up on mobile but not on desktop. It seems somewhat related to this: https://github.com/stemkoski/stemkoski.github.com/issues/44 except in the opposite direction on Android, Google Chrome VR-- the glowing mesh is far too dim to see.
+                // You can see a demo of this by visiting https://stemkoski.github.io/Three.js/Shader-Glow.html on desktop vs. mobile and setting c = 0.2 and p = 1.4 in both cases.
+                // This fix essentially creates the illumination from the _back_ of the sphere when on mobile, which isn't as visually appealing as on desktop, but at least it's not nothing.
+                // note that side is front by default so this is a change we only need to apply for mobile.
+                // Haven't tested this on other devices, e.g. GearVR, OculusGo, etc. Just desktop and mobile.
+              }
               var coordinates = that.getCoordinates(t);
               sphere.setAttribute('position', coordinates.x + ' ' + coordinates.y + ' ' + coordinates.z);
               sphere.setAttribute('pulsing-glow', '');
