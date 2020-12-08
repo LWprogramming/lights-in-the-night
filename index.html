@@ -9,43 +9,6 @@
     <script src="src/glow.js"></script>
     <script type="text/javascript">
       /* jshint esversion: 6 */
-      AFRAME.registerComponent('current-color-display', {
-        init: function() {
-          var system = document.querySelector('a-scene').systems['color-select'];
-          system.registerCurrentColorDisplay(this.el);
-        }
-      });
-
-      AFRAME.registerSystem('color-select', {
-        init: function() {
-          this.currentColor = new THREE.Color('white'); // Must always be a THREE.Color
-          this.currentColorDisplay = null;
-        },
-
-        // Current color display shows the current paintbrush color
-        registerCurrentColorDisplay(currentColorDisplay) {
-          this.currentColorDisplay = currentColorDisplay;
-        },
-
-        // Set the current paintbrush color
-        setCurrentColor(color) {
-          // TODO: need to ensure that this.currentColorDisplay is initialized
-          this.currentColor = new THREE.Color(color);
-          this.currentColorDisplay.setAttribute("color", color);
-        },
-      });
-
-      AFRAME.registerComponent('color-select', {
-        init: function() {
-          var el = this.el;
-          var system = this.system;
-          el.addEventListener('click', function (event) {
-            console.log('I was clicked at: ', event.detail.intersection.point);
-            system.setCurrentColor(el.getAttribute("color"));
-          });
-        }
-      });
-
       AFRAME.registerComponent('colorable', {
         init: function() {
           var el = this.el;
@@ -56,37 +19,6 @@
         },
       });
 
-      AFRAME.registerComponent('mosaic-grid', {
-        init: function() {
-          var rows = 10;
-          var cols = 10;
-          var height = 0.2;
-          var width = 0.2;
-          var depth = 4;
-          for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-              var mosaicTile = document.createElement('a-plane');
-              mosaicTile.setAttribute('width', width);
-              mosaicTile.setAttribute('height', height);
-              var worldLocations = this.coordinateToWorldLocation(i, j, rows, cols, height, width, depth);
-              mosaicTile.setAttribute('position', worldLocations);
-              var randomColor = Math.floor(Math.random()*16777215).toString(16);
-              mosaicTile.setAttribute('color', '#' + randomColor);
-              mosaicTile.setAttribute('colorable', '');
-              this.el.appendChild(mosaicTile);
-            }
-          }
-        },
-
-        // Returns string "x y z" that can be plugged directly into position. Assumes centered at 0, 0.
-        coordinateToWorldLocation: function(row, col, rows, cols, height, width, depth) {
-          var leftmostWorldX = -1 * cols / 2 * width;
-          var topmostWorldY = rows / 2 * height;
-          var x = leftmostWorldX + width * col + width / 2;
-          var y = topmostWorldY - height * row - height / 2;
-          return x + " " + y + " -" + depth;
-        }
-      });
       AFRAME.registerComponent('spiral-lights', {
         // represents a spiral of glowing, pulsing spheres on a sphere with the player at the center of the sphere. Formulas from here: https://mathworld.wolfram.com/SphericalSpiral.html
         schema: {
@@ -136,16 +68,6 @@
         },
       });
 
-      AFRAME.registerComponent('palette', {
-        // makes the palette face the origin so that the plane of the color circles is perfectly lined up when the player looks at it. This requires a rotation about the x-axis.
-        init: function() {
-          var yPos = this.el.getAttribute('position').y;
-          var zPos = this.el.getAttribute('position').z;
-          var xRotation = -Math.atan(yPos / zPos) * 180 / Math.PI; // Aframe uses degrees
-          this.el.setAttribute('rotation', xRotation + " 0 0");
-        }
-      });
-
       AFRAME.registerComponent('pulsing-glow', {
         schema: {
           expandingTime: {type: 'number', default: 1},
@@ -185,6 +107,30 @@
           this.el.setAttribute('glow', 'scale:' + r);
         }
       });
+
+      AFRAME.registerComponent('light-switch', {
+        init: function() {
+          var colors = ['red', 'green', 'blue', 'yellow', 'aquamarine', 'purple', 'firebrick', 'white']; // hardcoding yay! TODO
+          function createSpiral(i) {
+            var rotationDegrees = 45 * i;
+            var colorHexString = '#' + new THREE.Color(colors[i]).getHexString();
+            var spiral = document.createElement('a-entity');
+            spiral.setAttribute('spiral-lights', 'colorHexString:' + colorHexString + '; rotation:' + rotationDegrees);
+            setTimeout(function() {document.getElementById('lights-container').appendChild(spiral);}, Math.random() * 3000); // TODO don't get by id
+          }
+          this.clicked = false;
+          this.el.addEventListener('click', function (event) {
+            if (this.clicked) {
+              return;
+            }
+            console.log('I was clicked at: ', event.detail.intersection.point);
+            for (let i = 0; i < 8; i++) {
+              createSpiral(i);
+            }
+            this.clicked = true;
+          });
+        }
+      });
     </script>
 </head>
 <body>
@@ -192,39 +138,14 @@
     <a-sky color="black"></a-sky>
     <a-camera look-controls position="0 0 0" wasd-controls="fly:true">
       <a-cursor></a-cursor>
-      <a-entity position="0.5 0.5 -1">
-        <a-entity position="0.44 0.105 0" text="value: Color; color: white"></a-entity> <!-- no clue why this positioning puts it above the color circle but it does -->
-        <a-entity>
-          <a-circle id="current-color-circle" radius="0.05" current-color-display></a-circle>
-          <!-- <a-ring id="current-color-ring" radius-inner="0.05" radius-outer="0.055" color="black"></a-ring> -->
-        </a-entity>
-      </a-entity>
     </a-camera>
-    <!-- <a-sphere color="yellow" position="0 0 0" radius="10" material="side: double"></a-sphere> -->
-    <a-entity position="0 -2 -4" palette>
-      <a-circle color="red" position="-1 0 0" radius="0.4" color-select side="double"></a-circle>
-      <a-circle color="green" position="0 0 0" radius="0.4" color-select side="double"></a-circle>
-      <a-circle color="blue" position="1 0 0" radius="0.4" color-select side="double"></a-circle>
+    <a-entity position="0 0 -1">
+      <a-circle color="blue" radius="0.4" side="double" light-switch>
+        <!-- Why does this text positioning work? I don't know either -->
+        <a-entity position="0.417 0 0.01" text="value: Click me; color: white"></a-entity>
+      </a-circle>
     </a-entity>
-    <a-entity spiral-lights="colorHexString:#ff0000"></a-entity> <!-- red -->
-    <a-entity spiral-lights="colorHexString:#0000ff; rotation:45"></a-entity> <!-- blue -->
-    <a-entity spiral-lights="colorHexString:#00ff00; rotation:90"></a-entity> <!-- green -->
-    <a-entity spiral-lights="colorHexString:#ffff00; rotation:135"></a-entity> <!-- yellow -->
-    <a-entity spiral-lights="colorHexString:#ff00ff; rotation:180"></a-entity> <!--  -->
-    <a-entity spiral-lights="colorHexString:#00ffff; rotation:225"></a-entity> <!--  -->
-    <a-entity spiral-lights="colorHexString:#87ceeb; rotation:270"></a-entity> <!-- sky blue -->
-    <a-entity spiral-lights="colorHexString:#FFA500; rotation:315"></a-entity> <!-- orange -->
-
-    <!-- <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 -3" radius="0.05" pulsing-glow></a-sphere> -->
-<!--     <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 -3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 -0.5 -3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 -3" radius="0.05" pulsing-glow></a-sphere>
- -->
-<!--     <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 0.5 3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 0.5 3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="1 -0.5 3" radius="0.05" pulsing-glow></a-sphere>
-    <a-sphere glow="c:0.2; p:1.4;scale:3" position="-1 -0.5 3" radius="0.05" pulsing-glow></a-sphere> -->
-    <!-- <a-entity mosaic-grid></a-entity> -->
+    <a-entity id="lights-container"></a-entity>
   </a-scene>
 </body>
 </html>
