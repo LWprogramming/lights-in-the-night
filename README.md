@@ -36,6 +36,9 @@ Run `python3 -m http.server` from the root of the folder and open localhost:8000
 
 * A general mountain of TODOs, hacks, and hardcoded things (but hey, the demo works, right?)
 
+* The shader doesn't seem to work on Windows in Chrome-- it appears to be a similar problem with Android without reversed glow meshes, where the mesh is nearly invisible for some unknown reason
+
+
 # Why does your index.html have so many copy-pasted elements?
 
 I suspected there might've been some sort of issue with appending elements so I decided to avoid programmatically adding them in case that was the issue. In retrospect, it probably wasn't, but I haven't bothered with changing it back because my main goal here was to get a demo working as fast as possible and I had other priorities.
