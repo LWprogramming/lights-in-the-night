@@ -2,6 +2,8 @@
 
 I wanted to learn A-frame and as soon as I found out about the aframe-glow component I knew I wanted to use it.
 
+![screenshot](./screenshot.png)
+
 # Usage
 
 Visit the Glitch url `https://lights-in-the-night.glitch.me/` on desktop, mobile or VR device! Once you enter the scene, look at the big blue button that says "click me!" and click it. Then you can look around (click + drag), and when you get a glowing light to the center of your screen you can click it to make it glow even bigger :)
