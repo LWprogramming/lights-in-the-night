@@ -6,7 +6,7 @@ I wanted to learn A-frame and as soon as I found out about the aframe-glow compo
 
 ![screenshot with spirals](./screenshot_2.png)
 
-_From this angle you can see the spirals traced by parametric equations_
+_From this angle you can see the spirals traced by parametric equations-- all the lights of the same color are part of the same spiral_
 
 # Usage
 
