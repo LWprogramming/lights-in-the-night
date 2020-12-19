@@ -27,7 +27,7 @@ AFRAME.registerComponent('glow', {
     			"c":   { type: "f", value: that.data.c },
     			"p":   { type: "f", value: that.data.p },
     			glowColor: { type: "c", value: new THREE.Color(that.data.color) },
-    			viewVector: { type: "v3", value: new THREE.Vector3().subVectors(camera.position, that.el.getAttribute('position')) }
+                viewVector: { type: "v3", value: new THREE.Vector3().subVectors(camera.position, that.el.getAttribute('position')) }
     		},
     		vertexShader:   THREE.__GlowShader.vertexShader,
     		fragmentShader: THREE.__GlowShader.fragmentShader,
