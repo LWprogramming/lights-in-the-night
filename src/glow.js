@@ -89,8 +89,12 @@ AFRAME.registerComponent('glow', {
       this.glowMesh.rotation.set(this.el.object3D.rotation.x, this.el.object3D.rotation.y, this.el.object3D.rotation.z);
       this.glowMesh.scale.set(this.el.object3D.scale.x*this.data.scale, this.el.object3D.scale.y*this.data.scale, this.el.object3D.scale.z*this.data.scale);
       if (!this.camera) { return; }
+
+      // getWorldPosition doesn't work in VR mode, according to this: https://github.com/aframevr/aframe/issues/4568#issuecomment-622992096
       var glowMeshWorldPosition = new THREE.Vector3();
-      this.glowMesh.getWorldPosition(glowMeshWorldPosition);
+      this.el.object3D.updateMatrixWorld();
+      glowMeshWorldPosition.setFromMatrixPosition(this.el.object3D.matrixWorld);
+      // this.glowMesh.getWorldPosition(glowMeshWorldPosition);
       this.glowMesh.material.uniforms.viewVector.value =
         new THREE.Vector3().subVectors( this.camera.position, glowMeshWorldPosition );
     }
