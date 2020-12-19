@@ -30,6 +30,14 @@ Run `python3 -m http.server` from the root of the folder and open localhost:8000
 
 * Page may take a while to load, but it should be pretty smooth sailing once it's ready. This most likely has to do with Three.js and how I'm setting up the scene right now.
 
+* Need to change getWorldPosition: https://github.com/aframevr/aframe/issues/4568#issuecomment-622992096
+
+```
+var originVec3 = new THREE.Vector3();
+el.object3D.updateMatrixWorld();
+originVec3.setFromMatrixPosition(el.object3D.matrixWorld);
+```
+
 * The glow shader works differently on desktop vs. mobile, so what looks great on the computer is nearly invisible on the phone! I was able to reproduce this problem with the shader demo at https://stemkoski.github.io/Three.js/Shader-Glow.html, so it's not a bug with the code here. As a temporary work around, I've set it up so that if you're viewing it on mobile, the glowing mesh gets lit from the back and you can still see the colors.
 
 * When in VR mode on the phone, clicks don't seem to register (although they do on desktop and non-VR mode on the phone). Unfortunately, this means that you don't get to click the lights in VR mode at the moment. TODO: check this link out- https://www.chromestatus.com/feature/6048666307526656#details. Might be able to work around this by detecting the tap using an overlay that detects touch events and then have it relay the information to A-frame. More info: https://github.com/aframevr/aframe/issues/4372#issuecomment-569121003
